@@ -2,10 +2,10 @@ import React from 'react';
 
 export function PokePageComponent(props) {
     
-    console.log(this.props)
+    console.log(props)
     return (
         <>
-            <p>Hello, I am {this.props.name}</p>
+            <p>Hello, I am {props.name}</p>
         </>
     )
 
