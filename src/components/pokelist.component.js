@@ -106,9 +106,9 @@ export function PokeListComponent() {
                 <p>Offset</p>
                 <input type="text" id="poke-text-input" onChange={updateOffset} />
             </div>
-            <button onClick={() => submit()}>Submit</button>
-            <button onClick={() => sortBy('A')}>Sort Ascending</button>
-            <button onClick={() => sortBy('D')}>Sort Decending</button>
+            <button id='submitBtn' onClick={() => submit()}>Submit</button>
+            <button id='sortABtn' onClick={() => sortBy('A')}>Sort Ascending</button>
+            <button id='sortDBtn' onClick={() => sortBy('D')}>Sort Decending</button>
             <div id="poke-display">
                 {updateDisplay()}
             </div>
