@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import Axios from 'axios';
-import { usePokeName } from '../contexts/PokeNameContext';
+import { usePokeName, usePokeNameUpdate } from '../contexts/PokeNameContext';
+import { Link } from 'react-router-dom';
 
 export function PokeListComponent() {
-    const { pokeName, setPokeName } = usePokeName()
+    const pokeName = usePokeName()
+    const pokeNameUpdate = usePokeNameUpdate()
     const [poke, setPoke] = useState( () => {
         return [{
         name: 'bulbasaur',
@@ -71,10 +73,9 @@ export function PokeListComponent() {
         setdisplay(updateDisplay())
     }
 
-    function updateSelectedName() {
+    async function updateSelectedName(name) {
         console.log("Before: "+ pokeName);
-        setPokeName(prevPokeName => poke[0].name)
-        console.log("After: "+ pokeName);
+        pokeNameUpdate(name)
     }
 
     function updateDisplay() {
@@ -84,7 +85,7 @@ export function PokeListComponent() {
                 <div key={poke[p].id}>
                     <ul>Name: {poke[p].name}</ul>
                     <ul>ID: {poke[p].id}</ul>
-                    <a href='/pokepage'>See My Page</a>
+                    <Link to='/pokepage' onClick={() => updateSelectedName(poke[p].name)}>See My Page</Link>
                     <div></div>
                     <a href={poke[p].url}>Additional Information</a>
                 </div>
@@ -108,7 +109,6 @@ export function PokeListComponent() {
             <button onClick={() => submit()}>Submit</button>
             <button onClick={() => sortBy('A')}>Sort Ascending</button>
             <button onClick={() => sortBy('D')}>Sort Decending</button>
-            <button onClick={() => updateSelectedName()}>change name</button>
             <div id="poke-display">
                 {updateDisplay()}
             </div>
