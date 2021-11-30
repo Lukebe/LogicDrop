@@ -1,11 +1,13 @@
 import React from 'react';
+import { usePokeName } from '../contexts/PokeNameContext';
 
-export function PokePageComponent(props) {
+export function PokePageComponent() {
     
-    console.log(props)
+    const name = usePokeName()
+
     return (
         <>
-            <p>Hello, I am {props.name}</p>
+            <p>Hello, I am {name}</p>
         </>
     )
 

@@ -1,50 +1,19 @@
 import React, { useState } from 'react';
 import Axios from 'axios';
+import { usePokeName } from '../contexts/PokeNameContext';
 
 export function PokeListComponent() {
+    const { pokeName, setPokeName } = usePokeName()
     const [poke, setPoke] = useState( () => {
         return [{
-        name: 'Bulbasaur',
+        name: 'bulbasaur',
         url: 'https://pokeapi.co/api/v2/pokemon/1/',
         id: 1
         }]
     })
     const [listSize, setSize] = useState( () => {return 1});
-    const [listOffset, setOffset] = useState( () => {return 0});
-    
-    
-    const display= [];
-    for (let p=0; p< poke.length; p++) {
-        display.push(
-            <div>
-            <ul>Name: {poke[p].name}</ul>
-                <ul>ID: {poke[p].id}</ul>
-                <a href='/pokepage'>See My Page</a>
-                <div></div>
-            <a href={poke[p].url}>Additional Information</a>
-        </div>
-        );
-    }
-    
-    return (
-        <div>
-            <h1>Poke List</h1>
-            <div id="poke-input">
-                <p>Limit</p>
-                <input type="text" id="poke-text-input" onChange={updateLimit} />
-            </div>
-            <div id="poke-input">
-                <p>Offset</p>
-                <input type="text" id="poke-text-input" onChange={updateOffset} />
-            </div>
-            <button onClick={submit()}>Submit</button>
-            <button onClick={() => sortByA()}>Sort Ascending</button>
-            <button onClick={() => sortByD()}>Sort Decending</button>
-            <div id="poke-display">
-                {display}
-            </div>
-        </div>
-    );
+    const [listOffset, setOffset] = useState(() => { return 0 });
+    const [display, setdisplay] = useState(() => { return <div></div> });
 
     async function submit() {
         const url = `https://pokeapi.co/api/v2/pokemon/?limit=${listSize}&offset=${listOffset}`;
@@ -73,37 +42,78 @@ export function PokeListComponent() {
         setOffset(prevOffset => offset);
     }
 
-    function sortByA() {
+    function sortBy(direction) {
         let pokeArr = poke;
         let intermediate = {};
         for(let i=1; i < pokeArr.length; i++){
             for (let x = 1; x < pokeArr.length; x++) {
-                if (pokeArr[x].name < pokeArr[x-1].name){
-                    intermediate = pokeArr[x-1];
-                    pokeArr[x-1] = pokeArr[x];
-                    pokeArr[x] = intermediate;
+                switch (direction) {
+                    case 'A': {
+                        if (pokeArr[x].name < pokeArr[x - 1].name) {
+                            intermediate = pokeArr[x - 1];
+                            pokeArr[x - 1] = pokeArr[x];
+                            pokeArr[x] = intermediate;
+                        }
+                    }
+                        break;
+                    case 'D': {
+                        if (pokeArr[x].name > pokeArr[x - 1].name) {
+                            intermediate = pokeArr[x - 1];
+                            pokeArr[x - 1] = pokeArr[x];
+                            pokeArr[x] = intermediate;
+                        }
+                    }
                 }
             }
         }
         console.log(pokeArr);
-        setPoke(prevPoke => pokeArr)
+        setPoke(prevPoke => pokeArr);
+        setdisplay(updateDisplay())
     }
 
-    function sortByD() {
-        let pokeArr = poke;
-        let intermediate = {};
-        for (let i = 1; i < pokeArr.length; i++) {
-            for (let x = 1; x < pokeArr.length; x++) {
-                if (pokeArr[x].name > pokeArr[x - 1].name) {
-                    intermediate = pokeArr[x - 1];
-                    pokeArr[x - 1] = pokeArr[x];
-                    pokeArr[x] = intermediate;
-                }
-            }
-        }
-        console.log(pokeArr);
-        setPoke(prevPoke => pokeArr)
+    function updateSelectedName() {
+        console.log("Before: "+ pokeName);
+        setPokeName(prevPokeName => poke[0].name)
+        console.log("After: "+ pokeName);
     }
+
+    function updateDisplay() {
+        const display = [];
+        for (let p = 0; p < poke.length; p++) {
+            display.push(
+                <div key={poke[p].id}>
+                    <ul>Name: {poke[p].name}</ul>
+                    <ul>ID: {poke[p].id}</ul>
+                    <a href='/pokepage'>See My Page</a>
+                    <div></div>
+                    <a href={poke[p].url}>Additional Information</a>
+                </div>
+            );
+        }
+        //setdisplay(prevDisplay => display)
+        return display;
+    }
+
+    return (
+        <div>
+            <h1>Poke List</h1>
+            <div id="poke-input">
+                <p>Limit</p>
+                <input type="text" id="poke-text-input" onChange={updateLimit} />
+            </div>
+            <div id="poke-input">
+                <p>Offset</p>
+                <input type="text" id="poke-text-input" onChange={updateOffset} />
+            </div>
+            <button onClick={() => submit()}>Submit</button>
+            <button onClick={() => sortBy('A')}>Sort Ascending</button>
+            <button onClick={() => sortBy('D')}>Sort Decending</button>
+            <button onClick={() => updateSelectedName()}>change name</button>
+            <div id="poke-display">
+                {updateDisplay()}
+            </div>
+        </div>
+    );
 }
 
 export default PokeListComponent;

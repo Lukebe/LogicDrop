@@ -9,23 +9,22 @@ import NavComponent from './components/nav.component';
 import PokeComponent from './components/poke.component';
 import { PokeListComponent } from './components/pokelist.component';
 import { PokePageComponent } from './components/pokepage.component';
-import { createContext } from 'vm';
-
-const pokeName = 'Bulbasaur';
-const NameContext = createContext(pokeName);
-
+import { PokeNameProvider } from './contexts/PokeNameContext';
+ 
 const App = () => {
   return (
-    <BrowserRouter>
-      <NavComponent />
-      <Switch>
-        <Route path="/clicker" component={ClickerComponent} />
-        <Route path="/poke" component={PokeComponent} />
-        <Route path="/pokelist" component={PokeListComponent} value={pokeName}/>
-        <Route path="/pokepage" component={PokePageComponent} value={pokeName}/>
-        <Route component={ClickerComponent} />
-      </Switch>
-    </BrowserRouter>
+    <PokeNameProvider>
+      <BrowserRouter>
+        <NavComponent />
+        <Switch>
+          <Route path="/clicker" component={ClickerComponent} />
+          <Route path="/poke" component={PokeComponent} />
+          <Route path="/pokelist" component={PokeListComponent}/>
+          <Route path="/pokepage" component={PokePageComponent}/>
+          <Route component={ClickerComponent} />
+        </Switch>
+      </BrowserRouter>
+    </PokeNameProvider>
   );
 }
 
