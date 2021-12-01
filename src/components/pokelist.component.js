@@ -82,9 +82,9 @@ export function PokeListComponent() {
         const display = [];
         for (let p = 0; p < poke.length; p++) {
             display.push(
-                <div key={poke[p].id}>
+                <div key={p}>
                     <ul>Name: {poke[p].name}</ul>
-                    <ul>ID: {poke[p].id}</ul>
+                    <ul id={p}>ID: {poke[p].id}</ul>
                     <Link to='/pokepage' onClick={() => updateSelectedName(poke[p].name)}>See My Page</Link>
                     <div></div>
                     <a href={poke[p].url}>Additional Information</a>
