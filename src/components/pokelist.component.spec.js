@@ -38,35 +38,35 @@ describe('PokeListComponent', () => {
 
     test('should display axios data on submit button click', () => {
          expect(pokelist.contains(
-            <ul>
-                Name:
+            <td>
                 ivysaur
-            </ul>)).toBe(true);
+            </td>)).toBe(true);
+        console.log(pokelist.debug)
     })
 
     test('should display id from axios url data', () => {
         expect(pokelist.contains(
-            <ul id={0}>
-                ID:
+            <td id={0}>
                 2
-            </ul>)).toBe(true);
+            </td>)).toBe(true);
+        console.log(pokelist.debug)
     });
 
     test('should sort display ascending', () => {
-        pokelist.find("#sortABtn").simulate("click");
+        pokelist.find("#sortA").simulate("click");
         expect(pokelist.contains(
-            <ul id={0}>
-                ID:
+            <td id={0}>
                 4
-            </ul>)).toBe(true);
+            </td>)).toBe(true);
+        console.log(pokelist.debug)
     });
 
     test('should sort display ascending', () => {
-        pokelist.find("#sortDBtn").simulate("click");
+        pokelist.find("#sortD").simulate("click");
         expect(pokelist.contains(
-            <ul id={0}>
-                ID:
+            <td id={0}>
                 3
-            </ul>)).toBe(true);
+            </td>)).toBe(true);
+        console.log(pokelist.debug)
     });
 });

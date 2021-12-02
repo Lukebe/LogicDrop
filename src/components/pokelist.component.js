@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import Axios from 'axios';
 import { usePokeName, usePokeNameUpdate } from '../contexts/PokeNameContext';
 import { Link } from 'react-router-dom';
+import { Col, Dropdown, Form, Row, Table } from 'react-bootstrap';
+import Button from "react-bootstrap/Button";
 
 export function PokeListComponent() {
     const pokeName = usePokeName()
@@ -15,9 +17,14 @@ export function PokeListComponent() {
     })
     const [listSize, setSize] = useState( () => {return 1});
     const [listOffset, setOffset] = useState(() => { return 0 });
-    const [display, setdisplay] = useState(() => { return <div></div> });
+    const [pDisplay, setdisplay] = useState(() => updateDisplay());
 
-    async function submit() {
+    function submit() {
+        fetchData();
+        setdisplay(prevDisplay => updateDisplay());
+    }
+
+    async function fetchData() {
         const url = `https://pokeapi.co/api/v2/pokemon/?limit=${listSize}&offset=${listOffset}`;
         Axios.get(url).then((payload) => {
             setPoke( prevPoke =>
@@ -26,7 +33,7 @@ export function PokeListComponent() {
                     {
                         name:p.name,
                         url:p.url,
-                            id: p.url.slice(-3, -1).replace("/","")
+                        id: p.url.slice(-3, -1).replace("/","")
                     }
                     )
                 })
@@ -68,13 +75,11 @@ export function PokeListComponent() {
                 }
             }
         }
-        console.log(pokeArr);
         setPoke(prevPoke => pokeArr);
-        setdisplay(updateDisplay())
+        setdisplay(prevDisplay => updateDisplay());
     }
 
     async function updateSelectedName(name) {
-        console.log("Before: "+ pokeName);
         pokeNameUpdate(name)
     }
 
@@ -82,35 +87,81 @@ export function PokeListComponent() {
         const display = [];
         for (let p = 0; p < poke.length; p++) {
             display.push(
-                <div key={p}>
-                    <ul>Name: {poke[p].name}</ul>
-                    <ul id={p}>ID: {poke[p].id}</ul>
-                    <Link to='/pokepage' onClick={() => updateSelectedName(poke[p].name)}>See My Page</Link>
-                    <div></div>
-                    <a href={poke[p].url}>Additional Information</a>
-                </div>
+                <tr key={p}>
+                    <td id={p}>{poke[p].id}</td>
+                    <td>{poke[p].name}</td>
+                    <td>
+                        <Link to='/pokepage' onClick={() => updateSelectedName(poke[p].name)}>
+                            See My Page
+                        </Link>
+                    </td>
+                    <td>
+                        <a href={poke[p].url}>
+                            Additional Information
+                        </a>
+                    </td>
+                </tr>
             );
         }
-        //setdisplay(prevDisplay => display)
         return display;
     }
 
     return (
         <div>
             <h1>Poke List</h1>
-            <div id="poke-input">
-                <p>Limit</p>
-                <input type="text" id="poke-text-input" onChange={updateLimit} />
-            </div>
-            <div id="poke-input">
-                <p>Offset</p>
-                <input type="text" id="poke-text-input" onChange={updateOffset} />
-            </div>
-            <button id='submitBtn' onClick={() => submit()}>Submit</button>
-            <button id='sortABtn' onClick={() => sortBy('A')}>Sort Ascending</button>
-            <button id='sortDBtn' onClick={() => sortBy('D')}>Sort Decending</button>
-            <div id="poke-display">
-                {updateDisplay()}
+            <div className="d-flex flex-row">
+                <div className="p-1">
+                    <Form>
+                        <Form.Group as={Row} className="mb-3" controlId="poke-input">
+                            <Form.Label  column sm="3">
+                                Limit
+                            </Form.Label>
+                            <Col sm="6">
+                            <Form.Control type="text" id="poke-limit-input" onChange={updateLimit} placeholder="1"/>
+                            </Col>
+                            <Col sm="3"/>
+                            <Form.Label column sm="3" className="my-4">
+                                Offset
+                            </Form.Label>
+                            <Col sm="6">
+                            <Form.Control  className="my-4" type="text" id="poke-text-input" onChange={updateOffset} placeholder="0"/>
+                            </Col>
+                            <Col sm="3"/>
+                        </Form.Group>
+                        <Button variant='primary' id='submitBtn' className="md-4" onClick={() => submit()}>
+                            Submit
+                        </Button>
+                    </Form>
+                    <span/>
+                    <Dropdown className="my-4">
+                        <Dropdown.Toggle variant='success' id='dropdown-sort'>
+                            Sort Poke List
+                        </Dropdown.Toggle>
+                        <Dropdown.Menu>
+                            <Dropdown.Item id='sortA' onClick={() => sortBy('A')}>
+                                Sort Ascending
+                            </Dropdown.Item>
+                            <Dropdown.Item id='sortD' onClick={() => sortBy('D')}>
+                                Sort Decending
+                            </Dropdown.Item>
+                        </Dropdown.Menu>
+                    </Dropdown>
+                </div>
+                <div className="p-11">
+                    <Table striped bordered hover>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Page</th>
+                                <th>URL</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {updateDisplay()}
+                        </tbody>
+                    </Table>
+                </div>
             </div>
         </div>
     );
